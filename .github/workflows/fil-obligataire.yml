@@ -2,8 +2,8 @@ name: Fil Obligataire
 
 on:
   schedule:
-    - cron: "*/15 5-21 * * 1-5"
-    - cron: "7 */2 * * 0,6"
+    - cron: "4,14,24,34,44,54 5-21 * * 1-5"
+    - cron: "17 */2 * * 0,6"
   workflow_dispatch:
   push:
     branches: [main]
@@ -27,7 +27,7 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-        run: python3 terminal.py --build site --interval 900 --previous "https://${OWNER,,}.github.io/${REPO}/news.json"
+        run: python3 terminal.py --build site --interval 600 --previous "https://${OWNER,,}.github.io/${REPO}/news.json"
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
