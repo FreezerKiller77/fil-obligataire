@@ -1,0 +1,216 @@
+{
+  "_aide": "Une source = un flux RSS ou Atom. Champs : code (2 à 6 lettres, unique), nom, url (adresse du flux), categorie (banques-centrales, institutions, regulateurs, presse-fr, presse-intl), langue (fr ou en), site (page d'accueil, facultatif), actif (false pour désactiver), retirer_suffixe (texte à retirer en fin de titre, facultatif).",
+  "sources": [
+    {
+      "code": "BCE",
+      "nom": "BCE · Communiqués et discours",
+      "url": "https://www.ecb.europa.eu/rss/press.html",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.ecb.europa.eu/press/html/index.en.html"
+    },
+    {
+      "code": "BCES",
+      "nom": "BCE · Communiqués statistiques",
+      "url": "https://www.ecb.europa.eu/rss/statpress.html",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.ecb.europa.eu/press/stats/html/index.en.html"
+    },
+    {
+      "code": "BCEB",
+      "nom": "BCE · Blog",
+      "url": "https://www.ecb.europa.eu/rss/blog.html",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.ecb.europa.eu/press/blog/html/index.en.html"
+    },
+    {
+      "code": "FED",
+      "nom": "Fed · Communiqués",
+      "url": "https://www.federalreserve.gov/feeds/press_all.xml",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.federalreserve.gov/newsevents/pressreleases.htm"
+    },
+    {
+      "code": "FEDS",
+      "nom": "Fed · Discours",
+      "url": "https://www.federalreserve.gov/feeds/speeches.xml",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.federalreserve.gov/newsevents/speeches.htm"
+    },
+    {
+      "code": "BOE",
+      "nom": "Bank of England · Actualités",
+      "url": "https://www.bankofengland.co.uk/rss/news",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.bankofengland.co.uk/news"
+    },
+    {
+      "code": "BOJ",
+      "nom": "Bank of Japan · Nouveautés",
+      "url": "https://www.boj.or.jp/en/rss/whatsnew.xml",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.boj.or.jp/en/"
+    },
+    {
+      "code": "BRI",
+      "nom": "BRI · Discours de banquiers centraux",
+      "url": "https://www.bis.org/doclist/cbspeeches.rss",
+      "categorie": "banques-centrales",
+      "langue": "en",
+      "site": "https://www.bis.org/cbspeeches/"
+    },
+    {
+      "code": "FMI",
+      "nom": "FMI · Actualités",
+      "url": "https://www.imf.org/en/News/rss?language=eng",
+      "categorie": "institutions",
+      "langue": "en",
+      "site": "https://www.imf.org/en/News"
+    },
+    {
+      "code": "ESTAT",
+      "nom": "Eurostat · Communiqués",
+      "url": "https://ec.europa.eu/eurostat/en/search?p_p_id=estatsearchportlet_WAR_estatsearchportlet&p_p_lifecycle=2&p_p_state=maximized&p_p_mode=view&p_p_resource_id=atom&_estatsearchportlet_WAR_estatsearchportlet_collection=CAT_PREREL",
+      "categorie": "institutions",
+      "langue": "en",
+      "site": "https://ec.europa.eu/eurostat/news/euro-indicators"
+    },
+    {
+      "code": "INVI",
+      "nom": "Investing.com · Indicateurs économiques",
+      "url": "https://www.investing.com/rss/news_95.rss",
+      "categorie": "institutions",
+      "langue": "en",
+      "site": "https://www.investing.com/news/economic-indicators"
+    },
+    {
+      "code": "INVE",
+      "nom": "Investing.com · Économie",
+      "url": "https://www.investing.com/rss/news_14.rss",
+      "categorie": "institutions",
+      "langue": "en",
+      "site": "https://www.investing.com/news/economy"
+    },
+    {
+      "code": "AMF",
+      "nom": "AMF · Communiqués et sanctions",
+      "url": "https://www.amf-france.org/fr/flux-rss/display/23",
+      "categorie": "regulateurs",
+      "langue": "fr",
+      "site": "https://www.amf-france.org/fr/actualites-publications"
+    },
+    {
+      "code": "ECHO",
+      "nom": "Les Echos · Finance & marchés",
+      "url": "https://www.lesechos.fr/rss/rss_finance-marches.xml",
+      "categorie": "presse-fr",
+      "langue": "fr",
+      "site": "https://www.lesechos.fr/finance-marches"
+    },
+    {
+      "code": "LMDE",
+      "nom": "Le Monde · Économie",
+      "url": "https://www.lemonde.fr/economie/rss_full.xml",
+      "categorie": "presse-fr",
+      "langue": "fr",
+      "site": "https://www.lemonde.fr/economie/"
+    },
+    {
+      "code": "FIGA",
+      "nom": "Le Figaro · Économie",
+      "url": "https://www.lefigaro.fr/rss/figaro_economie.xml",
+      "categorie": "presse-fr",
+      "langue": "fr",
+      "site": "https://www.lefigaro.fr/economie"
+    },
+    {
+      "code": "BFM",
+      "nom": "BFM Business · Économie",
+      "url": "https://www.bfmtv.com/rss/economie/",
+      "categorie": "presse-fr",
+      "langue": "fr",
+      "site": "https://www.bfmtv.com/economie/"
+    },
+    {
+      "code": "FT",
+      "nom": "Financial Times · Marchés",
+      "url": "https://www.ft.com/markets?format=rss",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.ft.com/markets"
+    },
+    {
+      "code": "FTE",
+      "nom": "Financial Times · Économie mondiale",
+      "url": "https://www.ft.com/global-economy?format=rss",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.ft.com/global-economy"
+    },
+    {
+      "code": "BBG",
+      "nom": "Bloomberg · Marchés",
+      "url": "https://feeds.bloomberg.com/markets/news.rss",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.bloomberg.com/markets"
+    },
+    {
+      "code": "BBGE",
+      "nom": "Bloomberg · Économie",
+      "url": "https://feeds.bloomberg.com/economics/news.rss",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.bloomberg.com/economics"
+    },
+    {
+      "code": "RTRS",
+      "nom": "Reuters · Taux, crédit, banques centrales (via Google News)",
+      "url": "https://news.google.com/rss/search?q=site:reuters.com+%28bonds+OR+yields+OR+%22central+bank%22+OR+ECB+OR+Fed+OR+credit+OR+debt%29+when:1d&hl=en-US&gl=US&ceid=US:en",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.reuters.com/markets/",
+      "retirer_suffixe": [
+        " - Reuters"
+      ]
+    },
+    {
+      "code": "WSJ",
+      "nom": "Wall Street Journal · Marchés",
+      "url": "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.wsj.com/finance"
+    },
+    {
+      "code": "CNBC",
+      "nom": "CNBC · Économie",
+      "url": "https://www.cnbc.com/id/20910258/device/rss/rss.html",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.cnbc.com/economy/"
+    },
+    {
+      "code": "CNBF",
+      "nom": "CNBC · Finance",
+      "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.cnbc.com/finance/"
+    },
+    {
+      "code": "ECON",
+      "nom": "The Economist · Finance & économie",
+      "url": "https://www.economist.com/finance-and-economics/rss.xml",
+      "categorie": "presse-intl",
+      "langue": "en",
+      "site": "https://www.economist.com/finance-and-economics"
+    }
+  ]
+}

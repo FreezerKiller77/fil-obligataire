@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fil Obligataire</title>
+<meta name="theme-color" content="#050505">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fil Oblig.">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap">
+<style>
+/* Layout : terminal plein écran. Ligne de commande, touches de fonction, puis fil des titres | article, puis barre d'état. */
+:root {
+  --bg: #050505;
+  --panel: #0c0b09;
+  --panel-2: #14120e;
+  --line: #262219;
+  --line-2: #3a3326;
+  --fg: #ece6d6;
+  --muted: #8d8573;
+  --faint: #5c5648;
+  --amber: #ffa52e;
+  --amber-ink: #1a1000;
+  --amber-soft: #3a2603;
+  --key: #f5c518;
+  --go: #23a55a;
+  --red: #ef5350;
+  --sel: #2b2107;
+  --fresh: #4a3200;
+  --cat-bc: #ffc94a;
+  --cat-inst: #5fd0e8;
+  --cat-reg: #c3a6ff;
+  --cat-fr: #8fb8ff;
+  --cat-intl: #7ddc95;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "Cascadia Mono", Menlo, monospace;
+  --font-text: "IBM Plex Sans Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  --fs-xs: 11px;
+  --fs-s: 12.5px;
+  --fs-m: 14px;
+  --fs-l: 15.5px;
+  --fs-xl: 24px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 var(--fs-m)/1.4 var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 1px solid var(--amber); outline-offset: 1px; }
+::selection { background: var(--amber); color: var(--amber-ink); }
+* { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+[hidden] { display: none !important; }
+
+.app {
+  height: 100%;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+/* ---------- ligne de commande */
+.cmdbar { grid-row: 1; }
+.fkeys { grid-row: 2; }
+.banner { grid-row: 3; }
+.filterbar { grid-row: 4; }
+.panes { grid-row: 5; }
+.status { grid-row: 6; }
+.cmdbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+.brand-mark { background: var(--amber); color: var(--amber-ink); padding: 1px 6px; font-size: 13px; }
+.brand-name { color: var(--amber); font-size: 13px; }
+.cmd {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  max-width: 640px;
+  border: 1px solid var(--line-2);
+  background: var(--bg);
+}
+.cmd:focus-within { border-color: var(--amber); }
+.cmd-prompt { font-family: var(--font-mono); color: var(--amber); padding: 5px 0 5px 10px; }
+.cmd input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 5px 8px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  color: var(--amber);
+  text-transform: uppercase;
+  outline: none;
+}
+.cmd input::placeholder { color: var(--faint); text-transform: none; }
+.cmd input::-webkit-search-cancel-button { display: none; }
+.key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 1px solid var(--line-2);
+  background: var(--panel-2);
+  color: var(--key);
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.key:hover { border-color: var(--key); }
+.key-go { background: var(--go); border-color: var(--go); color: #fff; }
+.key-go:hover { filter: brightness(1.12); border-color: var(--go); }
+.clocks {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.clocks b { color: var(--fg); font-weight: 500; }
+.clocks .city { letter-spacing: .06em; margin-right: 5px; }
+
+/* ---------- touches de fonction */
+.fkeys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  min-width: 0;
+}
+.fkey .kn {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  background: var(--key);
+  color: var(--amber-ink);
+  font-size: 10px;
+}
+.fkey .cnt { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.fkey[aria-pressed="true"] { background: var(--key); color: var(--amber-ink); border-color: var(--key); }
+.fkey[aria-pressed="true"] .kn { background: var(--amber-ink); color: var(--key); }
+.fkey[aria-pressed="true"] .cnt { color: var(--amber-ink); }
+.fkey.has-alert .cnt { color: var(--red); }
+.fkey.has-alert[aria-pressed="true"] .cnt { color: #8a0f0c; }
+.langs { margin-left: auto; display: flex; gap: 0; }
+.langs .key { border-right-width: 0; color: var(--muted); }
+.langs .key:last-child { border-right-width: 1px; }
+.langs .key[aria-pressed="true"] { color: var(--amber); background: var(--amber-soft); }
+
+/* ---------- filtres actifs */
+.filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-2);
+  padding: 2px 4px 2px 8px;
+  color: var(--amber);
+  background: var(--panel-2);
+  letter-spacing: .04em;
+}
+.chip button { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 4px; font-size: 13px; line-height: 1; }
+.chip button:hover { color: var(--red); }
+
+/* ---------- panneaux */
+.panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(340px, 1fr);
+  min-height: 0;
+}
+.panes.full { grid-template-columns: minmax(0, 1fr); }
+.panes.full .story { display: none; }
+.feed { min-height: 0; overflow-y: auto; border-right: 1px solid var(--line); }
+.story { min-height: 0; overflow-y: auto; background: var(--panel); }
+
+.day {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 16px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.day span { color: var(--muted); }
+
+.row {
+  display: grid;
+  grid-template-columns: 60px 50px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  min-height: 30px;
+  border-bottom: 1px solid #12100c;
+  cursor: pointer;
+}
+.row:hover { background: #0f0d09; }
+.row.sel { background: var(--sel); box-shadow: inset 2px 0 0 var(--amber); }
+.row.flash { animation: flash 2.4s ease-out 1; }
+@keyframes flash { from { background: var(--fresh); } to { background: transparent; } }
+.r-time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.row.fresh .r-time { color: var(--amber); }
+.row.fresh .r-time::before { content: "●"; font-size: 8px; vertical-align: 2px; margin-right: 4px; }
+.r-src {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .04em;
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.r-src:hover { text-decoration: underline; }
+.r-title {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--fs-m);
+  padding: 5px 0;
+}
+.row.alert .r-title { color: var(--amber); }
+.row.alert .r-title::before { content: "◆ "; color: var(--red); }
+.r-tags { display: flex; gap: 4px; }
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  border: 1px solid var(--line-2);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+mark { background: var(--amber); color: var(--amber-ink); padding: 0 1px; }
+
+.cat-banques-centrales { color: var(--cat-bc); }
+.cat-institutions { color: var(--cat-inst); }
+.cat-regulateurs { color: var(--cat-reg); }
+.cat-presse-fr { color: var(--cat-fr); }
+.cat-presse-intl { color: var(--cat-intl); }
+
+.more { padding: 14px 16px 22px; }
+.empty {
+  padding: 40px 16px;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: var(--fs-l);
+}
+.empty b { color: var(--fg); font-weight: 500; }
+
+/* ---------- article */
+.story-inner { padding: 18px 22px 28px; display: grid; gap: 14px; max-width: 72ch; }
+.st-back { display: none; justify-self: start; }
+.st-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.st-meta .st-code { font-weight: 600; }
+.st-date { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+.st-date b { color: var(--amber); font-weight: 500; }
+.st-title { margin: 0; font-size: var(--fs-xl); line-height: 1.2; font-weight: 600; text-wrap: balance; color: #fff6e0; }
+.st-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.st-tags .tag { font-size: var(--fs-xs); padding: 1px 6px; color: var(--fg); cursor: help; }
+.st-sum { margin: 0; font-size: var(--fs-l); line-height: 1.55; color: #d8d1c0; }
+.st-sum.none { color: var(--muted); font-style: italic; }
+.st-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-actions .key { font-size: var(--fs-s); padding: 7px 12px; }
+.st-link { font-family: var(--font-mono); font-size: 10.5px; color: var(--faint); word-break: break-all; }
+.st-related h2, .side-title {
+  margin: 8px 0 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--amber);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 5px;
+}
+.rel {
+  display: grid;
+  grid-template-columns: 84px 44px minmax(0, 1fr);
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px dotted var(--line);
+  cursor: pointer;
+  font-size: var(--fs-s);
+}
+.rel:hover .rel-t { color: var(--amber); }
+.rel-time { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+.rel-src { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 600; }
+.help { color: var(--muted); font-size: var(--fs-l); line-height: 1.55; }
+.help kbd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  border: 1px solid var(--line-2);
+  border-bottom-width: 2px;
+  padding: 0 5px;
+  color: var(--fg);
+  background: var(--panel-2);
+}
+.help dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: var(--fs-m); }
+.help dt { white-space: nowrap; }
+.help dd { margin: 0; }
+
+/* ---------- alertes */
+.watch {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  display: grid;
+  gap: 10px;
+}
+.watch-label { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: .08em; color: var(--amber); }
+.watch-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.watch form { display: flex; gap: 6px; max-width: 460px; }
+.watch input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--line-2);
+  background: var(--bg);
+  padding: 5px 8px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  outline: none;
+}
+.watch input:focus { border-color: var(--amber); }
+.watch-hint { font-size: var(--fs-s); color: var(--muted); }
+
+/* ---------- sources */
+.src-wrap { padding: 14px 16px 28px; display: grid; gap: 12px; }
+.src-summary { font-size: var(--fs-l); color: var(--muted); max-width: 80ch; }
+.src-summary b { color: var(--fg); font-weight: 500; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 820px; font-size: var(--fs-s); }
+th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  color: var(--amber);
+  background: var(--panel-2);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line-2);
+  white-space: nowrap;
+}
+td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+td.mono { font-family: var(--font-mono); font-size: var(--fs-xs); white-space: nowrap; color: var(--muted); }
+.st-ok, .st-err, .st-wait { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; }
+.st-ok { color: var(--go); }
+.st-err { color: var(--red); }
+.st-wait { color: var(--muted); }
+.src-err { color: var(--red); font-size: var(--fs-xs); font-family: var(--font-mono); margin-top: 2px; }
+.src-name a { text-decoration: none; }
+.src-name a:hover { text-decoration: underline; }
+tr.muted td { opacity: .45; }
+.toggle { accent-color: var(--amber); width: 15px; height: 15px; cursor: pointer; }
+
+/* ---------- barre d'état */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  min-width: 0;
+}
+.hints { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.hints kbd { color: var(--fg); font-family: inherit; }
+.status-right { margin-left: auto; display: flex; align-items: center; gap: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); display: inline-block; }
+.dot.ok { background: var(--go); }
+.dot.warn { background: var(--amber); }
+.dot.bad { background: var(--red); }
+.toast { color: var(--amber); }
+.status .key { padding: 3px 8px; }
+
+.banner {
+  padding: 8px 16px;
+  background: #3a0d0c;
+  color: #ffd5d2;
+  border-bottom: 1px solid #6b1d1a;
+  font-size: var(--fs-s);
+}
+
+/* ---------- téléphone */
+@media (max-width: 820px) {
+  .cmdbar { flex-wrap: wrap; gap: 8px 12px; }
+  .cmd { order: 3; flex-basis: 100%; max-width: none; }
+  .clocks .other { display: none; }
+  .fkeys .langs { margin-left: 8px; }
+  .panes { grid-template-columns: minmax(0, 1fr); }
+  .feed { border-right: 0; }
+  .story {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    transform: translateX(100%);
+    transition: transform .18s ease-out;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .story.open { transform: none; }
+  .st-back { display: inline-flex; }
+  .row { grid-template-columns: 58px minmax(0, 1fr); grid-template-areas: "time src" "title title"; gap: 0 8px; padding: 6px 16px; }
+  .r-time { grid-area: time; }
+  .r-src { grid-area: src; }
+  .r-title { grid-area: title; white-space: normal; padding: 2px 0 0; }
+  .r-tags { display: none; }
+  .hints { display: none; }
+  .cmd input, .watch input { font-size: 16px; }
+  .cmd-prompt { padding-top: 8px; }
+  .feed, .story, .fkeys, .table-scroll { -webkit-overflow-scrolling: touch; }
+  .fkeys { scrollbar-width: none; }
+  .fkeys::-webkit-scrollbar { display: none; }
+  .fkey { padding: 7px 10px; }
+  .chip button { padding: 4px 8px; font-size: 16px; }
+  .status .key { padding: 6px 10px; }
+  .status-right { margin-left: 0; width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; white-space: normal; }
+  .status-right .toast:empty { display: none; }
+  .next { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .row.flash { animation: none; background: var(--fresh); }
+  .story { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="cmdbar">
+    <div class="brand" aria-label="Fil Obligataire"><span class="brand-mark">FIL</span><span class="brand-name">OBLIGATAIRE</span></div>
+    <form class="cmd" id="cmd-form" role="search">
+      <span class="cmd-prompt" aria-hidden="true">&gt;</span>
+      <input id="cmd" type="search" autocomplete="off" spellcheck="false" placeholder="Chercher : OAT, spread, &quot;high yield&quot;, -Fed…" aria-label="Rechercher dans les titres">
+      <button class="key key-go" type="submit">&lt;GO&gt;</button>
+    </form>
+    <div class="clocks" id="clocks" aria-label="Heures des places financières"></div>
+  </header>
+
+  <nav class="fkeys" id="fkeys" aria-label="Rubriques"></nav>
+  <div class="banner" id="banner" hidden></div>
+  <div class="filterbar" id="filterbar" hidden></div>
+
+  <main class="panes" id="panes">
+    <section class="feed" id="feed" aria-label="Fil des titres" tabindex="-1"></section>
+    <aside class="story" id="story" aria-label="Titre sélectionné"></aside>
+  </main>
+
+  <footer class="status">
+    <div class="hints"><kbd>↑↓</kbd> naviguer · <kbd>⏎</kbd> ouvrir · <kbd>/</kbd> chercher · <kbd>1–8</kbd> rubriques · <kbd>R</kbd> actualiser · <kbd>Échap</kbd> effacer</div>
+    <div class="status-right">
+      <span class="toast" id="toast" aria-live="polite"></span>
+      <span><span class="dot" id="dot"></span> <span id="src-state">Chargement…</span></span>
+      <span id="upd"></span>
+      <button class="key" id="refresh" type="button" title="Actualiser (R)">⟳ Actualiser</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ===================================================== réglages */
+const TABS = [
+  { id: "top",     label: "TOP",          help: "Tous les titres" },
+  { id: "bc",      label: "BQ CENTRALES", help: "Banques centrales et politique monétaire" },
+  { id: "taux",    label: "TAUX",         help: "Taux, dette souveraine, adjudications" },
+  { id: "credit",  label: "CRÉDIT",       help: "Crédit, notations, défauts, émissions" },
+  { id: "macro",   label: "MACRO",        help: "Inflation, emploi, croissance, enquêtes" },
+  { id: "france",  label: "FRANCE",       help: "France et presse française" },
+  { id: "alertes", label: "ALERTES",      help: "Titres qui contiennent tes mots-clés" },
+  { id: "sources", label: "SOURCES",      help: "État de chaque source" },
+];
+const CATS = {
+  "banques-centrales": "Banque centrale",
+  "institutions": "Institution / stats",
+  "regulateurs": "Régulateur",
+  "presse-fr": "Presse française",
+  "presse-intl": "Presse internationale",
+};
+const DEFAULT_WATCH = ["OAT", "spread", "high yield", "Moody's", "Fitch", "dégradation", "downgrade", "émission obligataire", "Lagarde", "Bund", "BTP", "défaut"];
+const BROAD_TAGS = new Set(["TAUX", "CRÉDIT", "BUDGET", "FRANCE", "POL. MON."]);
+
+/* Étiquettes : motif cherché dans le titre et le début du résumé (texte sans accents, en minuscules). */
+const TAG_DEFS = [
+  { code: "BCE", kinds: ["cb"], full: "Banque centrale européenne (BCE)",
+    re: /\b(bce|ecb|lagarde|schnabel|philip (r\. )?lane|eurosysteme|eurosystem|conseil des gouverneurs|governing council|villeroy|nagel|cipollone|de guindos)\b/ },
+  { code: "FED", kinds: ["cb"], full: "Réserve fédérale américaine (Fed)",
+    re: /\b(fed|fomc|federal reserve|reserve federale|powell|bowman|waller|fed funds)\b/ },
+  { code: "BOE", kinds: ["cb"], full: "Bank of England (BoE)",
+    re: /\b(boe|bank of england|banque d'angleterre|andrew bailey)\b/ },
+  { code: "BOJ", kinds: ["cb"], full: "Bank of Japan (BoJ)",
+    re: /\b(boj|bank of japan|banque du japon|ueda)\b/ },
+  { code: "POL. MON.", kinds: ["cb", "rates"], full: "Politique monétaire",
+    re: /\b(central banks?|banques? centrales?|monetary policy|politique monetaire|rate (cuts?|hikes?|decision)|baisses? des taux|hausses? des taux|policy rate|taux directeurs?|quantitative (easing|tightening))\b/ },
+  { code: "OAT", kinds: ["rates", "fr"], full: "Obligations assimilables du Trésor (OAT), dette d'État française",
+    re: /\b(oat|dette (publique )?francaise|french (government )?(bonds?|debt|yields?)|agence france tresor)\b/ },
+  { code: "BUND", kinds: ["rates"], full: "Bund, dette d'État allemande",
+    re: /\b(bunds?|german (bonds?|yields?|debt)|schatz|bobl|dette allemande)\b/ },
+  { code: "BTP", kinds: ["rates"], full: "Buoni del Tesoro Poliennali (BTP), dette d'État italienne",
+    re: /\b(btps?|italian (bonds?|yields?|debt)|dette italienne)\b/ },
+  { code: "UST", kinds: ["rates"], full: "US Treasuries (UST), dette d'État américaine",
+    re: /\b(treasur(y|ies)|t-bills?|t-notes?|us (bonds?|yields?|debt)|10-year (note|yield)|bons du tresor)\b/ },
+  { code: "GILT", kinds: ["rates"], full: "Gilts, dette d'État britannique", re: /\b(gilts?)\b/ },
+  { code: "JGB", kinds: ["rates"], full: "Japanese Government Bonds (JGB)", re: /\b(jgbs?)\b/ },
+  { code: "TAUX", kinds: ["rates"], full: "Marchés de taux et dette souveraine",
+    re: /\b(yields?|rendements? obligataires?|bond (markets?|yields?|sell-?off|rally|investors?)|bonds? market|marches? obligataires?|obligations? (d'etat|souveraines?)|sovereign (bonds?|debt)|dette souveraine|courbe des taux|yield curve|taux (a|de) (2|5|10|30) ans|taux longs?|long-term rates|duration|adjudications?|bond auctions?|syndications?|spreads? souverains?)\b/ },
+  { code: "HY", kinds: ["credit"], full: "High yield (HY), crédit à haut rendement",
+    re: /\b(high[- ]yield|junk (bonds?|debt)|haut rendement|leveraged (loans?|finance)|lbo)\b/ },
+  { code: "IG", kinds: ["credit"], full: "Investment grade (IG), crédit de bonne qualité",
+    re: /\b(investment[- ]grade|corporate (bonds?|debt)|obligations? d'entreprises?|credit spreads?|spreads? de credit)\b/ },
+  { code: "NOTATION", kinds: ["credit"], full: "Agences de notation : notes, perspectives, dégradations",
+    re: /\b(downgrades?|downgraded|upgrades?|upgraded|degrad(e|ee|es|ees|ation)|notations?|credit ratings?|rating (actions?|agenc(y|ies))|moody'?s|fitch|s&p (global )?ratings|s&p (cuts?|downgrades?|upgrades?|raises?|lowers?|affirms?|revises?)|standard (&|and) poor'?s|scope ratings|outlook (to )?(negative|positive|stable)|perspective (negative|positive)|abaisse(e)? (sa |la )?note|releve(e)? (sa |la )?note)\b/ },
+  { code: "DÉFAUT", kinds: ["credit"], full: "Défaut, faillite, restructuration de dette",
+    re: /\b(defaults?|defaulted|defaut(s)? de paiement|bankruptc(y|ies)|chapter 11|faillites?|insolven(cy|t)|restructuration de (la )?dette|debt restructuring|redressement judiciaire|procedure de sauvegarde)\b/ },
+  { code: "ÉMISSION", kinds: ["credit"], full: "Émission obligataire et refinancement",
+    re: /\b(bond (sales?|issues?|issuance|offerings?|deals?)|debt (sales?|offerings?|issuance)|emissions? obligataires?|emprunts? obligataires?|placement (prive|obligataire)|green bonds?|obligations? vertes?|refinanc\w*)\b/ },
+  { code: "CRÉDIT", kinds: ["credit"], full: "Marché du crédit",
+    re: /\b(credit (markets?|risk|funds?|investors?)|private credit|credit prive|cds|clos?|collateralized loan|marche du credit|dette privee|hybrid bonds?|at1|cocos?|subordinated|subordonnees?)\b/ },
+  { code: "INFLATION", kinds: ["macro"], full: "Inflation et prix",
+    re: /\b(inflation|cpi|hicp|ipch|ipc|prix a la consommation|consumer prices?|pce|deflation|desinflation|disinflation)\b/ },
+  { code: "EMPLOI", kinds: ["macro"], full: "Emploi et marché du travail",
+    re: /\b(payrolls?|nfp|nonfarm|jobless|unemployment|chomage|emplois?|employment|jobs report|labou?r market|marche du travail)\b/ },
+  { code: "PIB", kinds: ["macro"], full: "Produit intérieur brut (PIB) et croissance",
+    re: /\b(pib|gdp|croissance economique|economic growth|recession|output gap)\b/ },
+  { code: "PMI", kinds: ["macro"], full: "Purchasing Managers' Index (PMI) et enquêtes d'activité",
+    re: /\b(pmi|ism|purchasing managers|climat des affaires|ifo|zew|sentiment economique|factory orders|commandes industrielles)\b/ },
+  { code: "BUDGET", kinds: ["macro"], full: "Budget et finances publiques",
+    re: /\b(budget|budgetaire|deficits?|dette publique|public debt|loi de finances|plf|debt ceiling|plafond de la dette|fiscal (policy|deficit|rules?))\b/ },
+  { code: "FRANCE", kinds: ["fr"], full: "France",
+    re: /\b(france|francais|francaise|francaises|french|bercy|insee|banque de france|matignon|elysee|assemblee nationale|cac 40)\b/ },
+];
+
+/* ===================================================== état */
+const store = {
+  get(key, fallback) { try { const v = localStorage.getItem("fil." + key); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+  set(key, value) { try { localStorage.setItem("fil." + key, JSON.stringify(value)); } catch (e) { /* stockage indisponible */ } },
+};
+
+const S = {
+  mode: "local",
+  interval: 180,
+  generated: 0,
+  nextRefresh: 0,
+  refreshing: false,
+  sources: new Map(),
+  sourceList: [],
+  items: [],
+  cache: new Map(),
+  known: new Set(),
+  fresh: new Map(),
+  firstLoad: true,
+  unseen: 0,
+  tab: TABS.some(t => t.id === store.get("tab", "top")) ? store.get("tab", "top") : "top",
+  query: "",
+  srcFilter: null,
+  lang: store.get("lang", "all"),
+  watch: store.get("watch", DEFAULT_WATCH),
+  muted: new Set(store.get("muted", [])),
+  selected: null,
+  view: [],
+  limit: 400,
+  offline: false,
+  pollTimer: null,
+};
+
+/* ===================================================== outils */
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[’‘ʼ]/g, "'").toLowerCase();
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function safeUrl(u) {
+  try { const url = new URL(u); return (url.protocol === "http:" || url.protocol === "https:") ? url.href : "#"; }
+  catch (e) { return "#"; }
+}
+
+const TZ = "Europe/Paris";
+const fTime = new Intl.DateTimeFormat("fr-FR", { timeZone: TZ, hour: "2-digit", minute: "2-digit" });
+const fTimeSec = new Intl.DateTimeFormat("fr-FR", { timeZone: TZ, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+const fDayKey = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+const fDayLabel = new Intl.DateTimeFormat("fr-FR", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
+const fFull = new Intl.DateTimeFormat("fr-FR", { timeZone: TZ, weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const fDate = new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const fShort = new Intl.DateTimeFormat("fr-FR", { timeZone: TZ, day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const CLOCKS = [
+  { city: "PAR", tz: "Europe/Paris", main: true },
+  { city: "LDN", tz: "Europe/London" },
+  { city: "NY", tz: "America/New_York" },
+  { city: "TKY", tz: "Asia/Tokyo" },
+];
+const clockFmts = CLOCKS.map(c => new Intl.DateTimeFormat("fr-FR", { timeZone: c.tz, hour: "2-digit", minute: "2-digit", second: c.main ? "2-digit" : undefined }));
+
+function rel(ts) {
+  const d = Date.now() - ts;
+  if (d < 60e3) return "à l'instant";
+  if (d < 3600e3) return `il y a ${Math.floor(d / 60e3)} min`;
+  if (d < 86400e3) return `il y a ${Math.floor(d / 3600e3)} h`;
+  const days = Math.floor(d / 86400e3);
+  return `il y a ${days} j`;
+}
+
+const ACC = { a: "aàâäáãå", c: "cç", e: "eéèêë", i: "iîïíì", o: "oôöóòõ", u: "uùûüú", y: "yÿý", n: "nñ", "'": "'’‘" };
+function looseRe(term) {
+  return [...term].map(ch => ACC[ch] ? `[${ACC[ch]}]` : reEsc(ch)).join("");
+}
+function highlight(text, re) {
+  if (!re) return esc(text);
+  let out = "", last = 0;
+  text.replace(re, (m, ...args) => {
+    const idx = args[args.length - 2];
+    if (m) { out += esc(text.slice(last, idx)) + "<mark>" + esc(m) + "</mark>"; last = idx + m.length; }
+    return m;
+  });
+  return out + esc(text.slice(last));
+}
+
+function parseQuery(q) {
+  const pos = [], neg = [];
+  const re = /(-?)"([^"]+)"|(-?)(\S+)/g;
+  let m;
+  while ((m = re.exec(q))) {
+    const negative = (m[1] || m[3]) === "-";
+    const t = norm(m[2] || m[4]).trim();
+    if (!t || /^[-"]+$/.test(t)) continue;
+    (negative ? neg : pos).push(t);
+  }
+  return { pos, neg };
+}
+
+function watchRegexes() {
+  return S.watch.map(w => ({ w, re: new RegExp(`(^|[^a-z0-9])${reEsc(norm(w))}(?=$|[^a-z0-9])`) }));
+}
+let WATCH_RES = watchRegexes();
+
+/* ===================================================== données */
+function derive(raw) {
+  const prev = S.cache.get(raw.id);
+  if (prev && prev.t === raw.t && prev.d === raw.d && prev.ts === raw.ts) return prev;
+  const src = S.sources.get(raw.s) || { code: raw.s, nom: raw.s, cat: "presse-intl", lang: "en" };
+  const n = norm(raw.t + " " + (raw.d || "").slice(0, 280));
+  const tags = [], kinds = new Set();
+  for (const def of TAG_DEFS) {
+    if (def.re.test(n)) { tags.push(def.code); def.kinds.forEach(k => kinds.add(k)); }
+  }
+  const it = {
+    id: raw.id, s: raw.s, t: raw.t, u: raw.u, ts: raw.ts, fs: raw.fs, d: raw.d || "",
+    n: norm(raw.t + " " + (raw.d || "")),
+    hay: norm(`${raw.t} ${raw.d || ""} ${src.code} ${src.nom} ${tags.join(" ")}`),
+    tags, kinds, cat: src.cat, lang: src.lang, alert: false, watchHits: [],
+    dateOnly: raw.ts % 86400000 === 0 && raw.ts !== raw.fs,
+  };
+  S.cache.set(raw.id, it);
+  return it;
+}
+
+function applyWatch(it) {
+  it.watchHits = WATCH_RES.filter(x => x.re.test(it.n)).map(x => x.w);
+  it.alert = it.watchHits.length > 0;
+}
+
+function ingest(data) {
+  S.mode = data.mode || "local";
+  S.interval = data.interval || S.interval;
+  S.generated = data.generated_at || Date.now();
+  S.nextRefresh = data.next_refresh || 0;
+  S.refreshing = !!data.refreshing;
+  S.sourceList = data.sources || [];
+  S.sources = new Map(S.sourceList.map(s => [s.code, s]));
+
+  const items = (data.items || []).map(derive);
+  items.forEach(applyWatch);
+  const ids = new Set(items.map(it => it.id));
+  for (const id of [...S.cache.keys()]) if (!ids.has(id)) S.cache.delete(id);
+
+  if (!S.firstLoad) {
+    const now = Date.now();
+    let added = 0;
+    for (const it of items) {
+      if (!S.known.has(it.id) && !S.muted.has(it.s)) { S.fresh.set(it.id, now); added++; }
+    }
+    if (added && document.hidden) { S.unseen += added; updateTitle(); }
+    if (added) toast(`${added} nouveau${added > 1 ? "x" : ""} titre${added > 1 ? "s" : ""}`);
+  }
+  S.known = ids;
+  S.firstLoad = false;
+  S.items = items;
+  renderAll();
+}
+
+async function load() {
+  try {
+    const r = await fetch("news.json?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    setOffline(false);
+    if (data.generated_at === S.generated) {
+      S.refreshing = !!data.refreshing; S.nextRefresh = data.next_refresh || 0;
+      renderStatus();
+      return;
+    }
+    ingest(data);
+  } catch (e) {
+    setOffline(true);
+  }
+}
+
+function schedulePoll() {
+  clearTimeout(S.pollTimer);
+  const delay = S.mode === "static" ? 120e3 : (S.refreshing ? 4e3 : 30e3);
+  S.pollTimer = setTimeout(async () => { await load(); schedulePoll(); }, delay);
+}
+
+async function refresh() {
+  if (S.mode !== "local") {
+    toast("Version en ligne : mise à jour automatique toutes les " + Math.round(S.interval / 60) + " min");
+    await load();
+    return;
+  }
+  try {
+    const r = await fetch("refresh", { method: "POST" });
+    if (r.status === 202) { toast("Actualisation des flux…"); S.refreshing = true; renderStatus(); }
+    else toast("Flux déjà actualisés il y a moins de 20 s");
+  } catch (e) { setOffline(true); }
+  schedulePoll();
+}
+
+/* ===================================================== filtres */
+function baseFilter(it) {
+  if (S.muted.has(it.s)) return false;
+  if (S.lang !== "all" && it.lang !== S.lang) return false;
+  if (S.srcFilter && it.s !== S.srcFilter) return false;
+  return true;
+}
+const TAB_TEST = {
+  top: () => true,
+  bc: it => it.cat === "banques-centrales" || it.kinds.has("cb"),
+  taux: it => it.kinds.has("rates"),
+  credit: it => it.kinds.has("credit"),
+  macro: it => it.kinds.has("macro"),
+  france: it => it.kinds.has("fr") || it.lang === "fr",
+  alertes: it => it.alert,
+  sources: () => true,
+};
+function queryTest(q) {
+  if (!q.pos.length && !q.neg.length) return () => true;
+  return it => q.pos.every(t => it.hay.includes(t)) && !q.neg.some(t => it.hay.includes(t));
+}
+
+/* ===================================================== rendu */
+function renderAll() {
+  computeView();
+  renderKeys();
+  renderFilterbar();
+  const panes = $("#panes");
+  panes.classList.toggle("full", S.tab === "sources");
+  if (S.tab === "sources") renderSources(); else renderFeed();
+  renderStory();
+  renderStatus();
+}
+
+function renderKeys() {
+  const q = parseQuery(S.query), qt = queryTest(q);
+  const since = Date.now() - 86400e3;
+  const pool = S.items.filter(it => baseFilter(it) && qt(it) && it.ts >= since);
+  const html = TABS.map((t, i) => {
+    let cnt = "";
+    if (t.id === "sources") {
+      const bad = S.sourceList.filter(s => s.status === "error").length;
+      cnt = bad ? `${bad} ERR` : "";
+    } else {
+      cnt = String(pool.filter(TAB_TEST[t.id]).length);
+    }
+    const alertCls = t.id === "alertes" && cnt !== "0" ? " has-alert" : "";
+    return `<button class="key fkey${alertCls}" type="button" data-tab="${t.id}" aria-pressed="${S.tab === t.id}" title="${esc(t.help)}${t.id === "sources" ? "" : " · le nombre compte les titres des dernières 24 h"} (touche ${i + 1})">`
+      + `<span class="kn">${i + 1}</span>${esc(t.label)}${cnt ? ` <span class="cnt">${esc(cnt)}</span>` : ""}</button>`;
+  }).join("");
+  const langs = [["all", "TOUS"], ["fr", "FR"], ["en", "EN"]]
+    .map(([v, l]) => `<button class="key" type="button" data-lang="${v}" aria-pressed="${S.lang === v}" title="Langue des sources">${l}</button>`).join("");
+  $("#fkeys").innerHTML = html + `<div class="langs" role="group" aria-label="Langue">${langs}</div>`;
+}
+
+function renderFilterbar() {
+  const bar = $("#filterbar");
+  const chips = [];
+  if (S.query.trim()) chips.push(`<span class="chip">RECHERCHE : ${esc(S.query.trim().toUpperCase())}<button type="button" data-clear="query" aria-label="Effacer la recherche">×</button></span>`);
+  if (S.srcFilter) {
+    const src = S.sources.get(S.srcFilter);
+    chips.push(`<span class="chip">SOURCE : ${esc(src ? src.nom : S.srcFilter)}<button type="button" data-clear="src" aria-label="Retirer le filtre source">×</button></span>`);
+  }
+  if (!chips.length || S.tab === "sources") { bar.hidden = true; bar.innerHTML = ""; return; }
+  bar.hidden = false;
+  bar.innerHTML = chips.join("") + `<span>${S.view.length} titre${S.view.length > 1 ? "s" : ""}</span>`;
+}
+
+function computeView() {
+  const q = parseQuery(S.query), qt = queryTest(q), tt = TAB_TEST[S.tab] || TAB_TEST.top;
+  S.view = S.items.filter(it => baseFilter(it) && tt(it) && qt(it));
+  S.hlRe = q.pos.length ? new RegExp(q.pos.map(looseRe).join("|"), "gi") : null;
+}
+
+function rowHtml(it, now) {
+  const src = S.sources.get(it.s);
+  const freshAt = S.fresh.get(it.id);
+  const isFresh = freshAt && now - freshAt < 10 * 60e3;
+  const flash = freshAt && now - freshAt < 3000;
+  const cls = ["row", it.id === S.selected ? "sel" : "", isFresh ? "fresh" : "", flash ? "flash" : "", it.alert ? "alert" : ""].filter(Boolean).join(" ");
+  const tags = it.tags.filter(t => !BROAD_TAGS.has(t)).concat(it.tags.filter(t => BROAD_TAGS.has(t))).slice(0, 3)
+    .map(t => `<span class="tag">${esc(t)}</span>`).join("");
+  return `<div class="${cls}" role="option" aria-selected="${it.id === S.selected}" data-id="${it.id}">`
+    + `<span class="r-time"${it.dateOnly ? ' title="Heure non précisée par la source"' : ""}>${it.dateOnly ? "––:––" : fTime.format(it.ts)}</span>`
+    + `<button class="r-src cat-${esc(it.cat)}" type="button" data-src="${esc(it.s)}" title="${esc(src ? src.nom : it.s)} · filtrer sur cette source">${esc(it.s)}</button>`
+    + `<span class="r-title">${highlight(it.t, S.hlRe)}</span>`
+    + `<span class="r-tags">${tags}</span></div>`;
+}
+
+function dayLabel(ts) {
+  const key = fDayKey.format(ts);
+  const today = fDayKey.format(Date.now());
+  const yesterday = fDayKey.format(Date.now() - 86400e3);
+  const label = fDayLabel.format(ts);
+  const extra = key === today ? "aujourd'hui" : key === yesterday ? "hier" : "";
+  return { key, label, extra };
+}
+
+function renderFeed() {
+  computeView();
+  const feed = $("#feed");
+  const scroll = feed.scrollTop;
+  let html = "";
+
+  if (S.tab === "alertes") {
+    const chips = S.watch.map((w, i) => `<span class="chip">${esc(w)}<button type="button" data-unwatch="${i}" aria-label="Retirer ${esc(w)}">×</button></span>`).join("");
+    html += `<div class="watch"><div class="watch-label">MOTS-CLÉS SURVEILLÉS</div>`
+      + `<div class="watch-chips">${chips || '<span class="watch-hint">Aucun mot-clé pour l\'instant.</span>'}</div>`
+      + `<form id="watch-form"><input id="watch-input" type="text" autocomplete="off" placeholder="Ajouter un mot-clé, puis Entrée" aria-label="Nouveau mot-clé"><button class="key" type="submit">Ajouter</button></form>`
+      + `<div class="watch-hint">Un titre qui contient l'un de ces mots est marqué ◆ dans toutes les rubriques. Accents et majuscules ignorés.</div></div>`;
+  }
+
+  if (!S.items.length) {
+    html += `<div class="empty"><b>Récupération des flux en cours.</b><br>Les premiers titres arrivent en général en moins de 20 secondes.</div>`;
+  } else if (!S.view.length) {
+    html += `<div class="empty"><b>Aucun titre ne correspond.</b><br>${S.query || S.srcFilter ? "Élargis la recherche ou retire un filtre (Échap)." : S.tab === "alertes" ? "Aucun titre récent ne contient tes mots-clés." : "Rien dans cette rubrique pour l'instant."}</div>`;
+  } else {
+    const now = Date.now();
+    let lastKey = "";
+    S.view.slice(0, S.limit).forEach(it => {
+      const d = dayLabel(it.ts);
+      if (d.key !== lastKey) {
+        lastKey = d.key;
+        html += `<div class="day">${esc(d.label)}${d.extra ? `<span>${d.extra}</span>` : ""}</div>`;
+      }
+      html += rowHtml(it, now);
+    });
+    if (S.view.length > S.limit) {
+      html += `<div class="more"><button class="key" type="button" id="more">Afficher ${Math.min(400, S.view.length - S.limit)} titres de plus (${S.view.length - S.limit} restants)</button></div>`;
+    }
+  }
+  feed.innerHTML = html;
+  feed.setAttribute("role", "listbox");
+  feed.scrollTop = scroll;
+
+  if (S.selected && !S.view.some(it => it.id === S.selected)) S.selected = null;
+  if (!S.selected && S.view.length && !isPhone()) S.selected = S.view[0].id;
+  markSelected();
+}
+
+function markSelected() {
+  document.querySelectorAll("#feed .row").forEach(r => {
+    const on = r.dataset.id === S.selected;
+    r.classList.toggle("sel", on);
+    r.setAttribute("aria-selected", on);
+  });
+}
+
+function relatedTo(it) {
+  const specific = it.tags.filter(t => !BROAD_TAGS.has(t));
+  if (!specific.length) return [];
+  return S.items.filter(o => o.id !== it.id && !S.muted.has(o.s) && Math.abs(o.ts - it.ts) < 72 * 3600e3
+    && o.tags.some(t => specific.includes(t))).slice(0, 6);
+}
+
+function renderStory() {
+  const box = $("#story");
+  if (S.tab === "sources") { box.innerHTML = ""; return; }
+  const it = S.selected ? S.cache.get(S.selected) : null;
+  if (!it) {
+    box.innerHTML = `<div class="story-inner help">
+      <div class="side-title">MODE D'EMPLOI</div>
+      <p>Sélectionne un titre pour lire son résumé ici. Le lien ouvre l'article sur le site de la source.</p>
+      <dl>
+        <dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>passer d'un titre à l'autre</dd>
+        <dt><kbd>⏎</kbd></dt><dd>ouvrir l'article dans un nouvel onglet</dd>
+        <dt><kbd>/</kbd></dt><dd>chercher (« high yield » entre guillemets, -mot pour exclure)</dd>
+        <dt><kbd>1</kbd> à <kbd>8</kbd></dt><dd>changer de rubrique</dd>
+        <dt><kbd>R</kbd></dt><dd>actualiser les flux</dd>
+        <dt><kbd>Échap</kbd></dt><dd>effacer la recherche et les filtres</dd>
+      </dl>
+      <p>Clique sur le code d'une source (BCE, FT…) pour n'afficher qu'elle.</p>
+    </div>`;
+    return;
+  }
+  const src = S.sources.get(it.s) || { nom: it.s, cat: it.cat };
+  const tags = it.tags.map(code => {
+    const def = TAG_DEFS.find(d => d.code === code);
+    return `<span class="tag" title="${esc(def ? def.full : code)}">${esc(code)}</span>`;
+  }).join("");
+  const url = safeUrl(it.u);
+  const host = (() => { try { return new URL(it.u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } })();
+  const related = relatedTo(it).map(o => `<div class="rel" data-goto="${o.id}"><span class="rel-time">${esc(fShort.format(o.ts))}</span>`
+    + `<span class="rel-src cat-${esc(o.cat)}">${esc(o.s)}</span><span class="rel-t">${esc(o.t)}</span></div>`).join("");
+  const undated = it.ts === it.fs ? " · date de publication absente du flux, heure de réception" : "";
+  const when = it.dateOnly ? `${esc(fDate.format(it.ts))}</b> · heure non précisée` : `${esc(fFull.format(it.ts))}</b> (Paris)`;
+  box.innerHTML = `<div class="story-inner">
+    <button class="key st-back" type="button" data-close>← Retour</button>
+    <div class="st-meta"><span class="st-code cat-${esc(src.cat)}">${esc(it.s)}</span><span>${esc(src.nom)}</span><span>${esc(CATS[src.cat] || "")}</span></div>
+    <div class="st-date"><b>${when} · ${esc(rel(it.ts))}${undated}</div>
+    <h1 class="st-title">${highlight(it.t, S.hlRe)}</h1>
+    ${tags ? `<div class="st-tags">${tags}</div>` : ""}
+    ${it.d ? `<p class="st-sum">${highlight(it.d, S.hlRe)}</p>` : `<p class="st-sum none">Le flux ne donne pas de résumé pour ce titre. Ouvre l'article pour le lire.</p>`}
+    ${it.watchHits.length ? `<div class="st-date">◆ Alerte : ${esc(it.watchHits.join(", "))}</div>` : ""}
+    <div class="st-actions">
+      <a class="key key-go" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Ouvrir l'article ↗</a>
+      <button class="key" type="button" data-src="${esc(it.s)}">Voir tout ${esc(it.s)}</button>
+      <button class="key" type="button" data-copy="${esc(url)}">Copier le lien</button>
+    </div>
+    <div class="st-link">${esc(host)}</div>
+    ${related ? `<div class="st-related"><h2>MÊME SUJET · 72 H</h2>${related}</div>` : ""}
+  </div>`;
+}
+
+function renderSources() {
+  computeView();
+  const list = S.sourceList;
+  const ok = list.filter(s => s.status === "ok").length;
+  const err = list.filter(s => s.status === "error").length;
+  const wait = list.length - ok - err;
+  const rows = list.map(s => {
+    const status = s.status === "ok" ? `<span class="st-ok">● OK</span>` : s.status === "error" ? `<span class="st-err">● ERREUR</span>` : `<span class="st-wait">○ EN ATTENTE</span>`;
+    const muted = S.muted.has(s.code);
+    const site = s.site ? safeUrl(s.site) : "";
+    return `<tr class="${muted ? "muted" : ""}">
+      <td>${status}</td>
+      <td class="mono"><span class="cat-${esc(s.cat)}" style="font-weight:600">${esc(s.code)}</span></td>
+      <td class="src-name">${site ? `<a href="${esc(site)}" target="_blank" rel="noopener noreferrer">${esc(s.nom)} ↗</a>` : esc(s.nom)}
+        ${s.status === "error" && s.error ? `<div class="src-err">${esc(s.error)}${s.count ? " · derniers titres conservés" : ""}</div>` : ""}</td>
+      <td>${esc(CATS[s.cat] || s.cat)}</td>
+      <td class="mono">${esc((s.lang || "").toUpperCase())}</td>
+      <td class="num">${s.count}</td>
+      <td class="mono">${s.latest ? esc(fShort.format(s.latest)) : "—"}</td>
+      <td class="mono">${s.fetched_at ? esc(fTimeSec.format(s.fetched_at)) : "—"}</td>
+      <td><input class="toggle" type="checkbox" id="mute-${esc(s.code)}" data-mute="${esc(s.code)}" ${muted ? "" : "checked"} aria-label="Afficher ${esc(s.nom)} dans le fil"></td>
+    </tr>`;
+  }).join("");
+  const feed = $("#feed");
+  feed.removeAttribute("role");
+  feed.innerHTML = `<div class="src-wrap">
+    <p class="src-summary"><b>${ok} source${ok > 1 ? "s" : ""} répond${ok > 1 ? "ent" : ""}</b>${err ? `, <b style="color:var(--red)">${err} en erreur</b>` : ""}${wait ? `, ${wait} en attente` : ""}.
+    Une source en erreur garde ses derniers titres. Une erreur HTTP 403 signifie en général que le site refuse les lecteurs automatiques depuis ton réseau.
+    Décoche une source pour la masquer du fil ; pour en ajouter une, modifie <b>sources.json</b>.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>ÉTAT</th><th>CODE</th><th>SOURCE</th><th>RUBRIQUE</th><th>LANGUE</th><th style="text-align:right">TITRES</th><th>DERNIER TITRE</th><th>DERNIÈRE LECTURE</th><th>AFFICHÉE</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>`;
+}
+
+function renderStatus() {
+  const list = S.sourceList;
+  const ok = list.filter(s => s.status === "ok").length;
+  const err = list.filter(s => s.status === "error").length;
+  const dot = $("#dot");
+  dot.className = "dot " + (S.offline ? "bad" : err === 0 && ok ? "ok" : err > list.length / 2 ? "bad" : ok ? "warn" : "");
+  $("#src-state").textContent = S.offline ? "Hors ligne" : list.length ? `${ok}/${list.length} sources` : "Chargement…";
+  let upd = "";
+  if (S.refreshing) upd = "Actualisation…";
+  else if (S.generated) {
+    upd = "MAJ " + fTimeSec.format(S.generated);
+  }
+  $("#upd").innerHTML = esc(upd) + (S.mode === "local" && !S.refreshing && S.nextRefresh > Date.now() ? `<span class="next"> · suivante ${esc(fTime.format(S.nextRefresh))}</span>` : "");
+}
+
+function setOffline(off) {
+  if (S.offline === off) return;
+  S.offline = off;
+  const b = $("#banner");
+  if (off) {
+    b.hidden = false;
+    b.textContent = location.protocol === "file:"
+      ? "Cette page doit être ouverte via terminal.py (python3 terminal.py), pas en double-cliquant sur index.html."
+      : S.mode === "static"
+        ? "Impossible de charger news.json. Nouvelle tentative dans 2 minutes."
+        : "Connexion perdue avec terminal.py. Relance-le (python terminal.py) : la page se reconnectera toute seule.";
+  } else {
+    b.hidden = true;
+  }
+  renderStatus();
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.textContent = ""; }, 4000);
+}
+
+function updateTitle() {
+  document.title = S.unseen ? `(${S.unseen}) Fil Obligataire` : "Fil Obligataire";
+}
+
+function tickClocks() {
+  const now = new Date();
+  $("#clocks").innerHTML = CLOCKS.map((c, i) => `<span class="${c.main ? "" : "other"}"><span class="city">${c.city}</span><b>${clockFmts[i].format(now)}</b></span>`).join("");
+}
+
+/* ===================================================== actions */
+const isPhone = () => window.matchMedia("(max-width: 820px)").matches;
+
+function select(id, { scroll = true, open = false } = {}) {
+  S.selected = id;
+  markSelected();
+  renderStory();
+  if (scroll) {
+    const row = document.querySelector(`#feed .row[data-id="${CSS.escape(id)}"]`);
+    if (row) row.scrollIntoView({ block: "nearest" });
+  }
+  if (open || isPhone()) $("#story").classList.add("open");
+  $("#story").scrollTop = 0;
+}
+
+function move(step) {
+  if (!S.view.length || S.tab === "sources") return;
+  let idx = S.view.findIndex(it => it.id === S.selected);
+  idx = idx < 0 ? 0 : Math.max(0, Math.min(Math.min(S.view.length, S.limit) - 1, idx + step));
+  select(S.view[idx].id, { open: false });
+  if (isPhone()) $("#story").classList.remove("open");
+}
+
+function openSelected() {
+  const it = S.selected && S.cache.get(S.selected);
+  if (!it) return;
+  const url = safeUrl(it.u);
+  if (url !== "#") window.open(url, "_blank", "noopener");
+}
+
+function setTab(id) {
+  if (!TAB_TEST[id] || S.tab === id) return;
+  S.tab = id;
+  store.set("tab", id);
+  S.limit = 400;
+  $("#feed").scrollTop = 0;
+  renderAll();
+}
+
+function setSourceFilter(code) {
+  S.srcFilter = code;
+  if (S.tab === "sources") S.tab = "top";
+  S.limit = 400;
+  $("#story").classList.remove("open");
+  $("#feed").scrollTop = 0;
+  renderAll();
+}
+
+function clearFilters() {
+  S.query = ""; $("#cmd").value = ""; S.srcFilter = null;
+  renderAll();
+}
+
+/* ===================================================== évènements */
+$("#cmd-form").addEventListener("submit", e => { e.preventDefault(); S.query = $("#cmd").value; if (S.tab === "sources") S.tab = "top"; renderAll(); $("#cmd").blur(); });
+let typeTimer = null;
+$("#cmd").addEventListener("input", () => {
+  clearTimeout(typeTimer);
+  typeTimer = setTimeout(() => { S.query = $("#cmd").value; S.limit = 400; if (S.tab === "sources") S.tab = "top"; renderAll(); }, 140);
+});
+
+$("#fkeys").addEventListener("click", e => {
+  const tab = e.target.closest("[data-tab]");
+  if (tab) return setTab(tab.dataset.tab);
+  const lang = e.target.closest("[data-lang]");
+  if (lang) { S.lang = lang.dataset.lang; store.set("lang", S.lang); renderAll(); }
+});
+
+$("#filterbar").addEventListener("click", e => {
+  const b = e.target.closest("[data-clear]");
+  if (!b) return;
+  if (b.dataset.clear === "query") { S.query = ""; $("#cmd").value = ""; }
+  if (b.dataset.clear === "src") S.srcFilter = null;
+  renderAll();
+});
+
+$("#feed").addEventListener("click", e => {
+  const srcBtn = e.target.closest("[data-src]");
+  if (srcBtn) { e.stopPropagation(); return setSourceFilter(srcBtn.dataset.src); }
+  const unwatch = e.target.closest("[data-unwatch]");
+  if (unwatch) {
+    S.watch.splice(Number(unwatch.dataset.unwatch), 1);
+    saveWatch();
+    return;
+  }
+  if (e.target.id === "more") { S.limit += 400; return renderFeed(); }
+  const row = e.target.closest(".row");
+  if (row) select(row.dataset.id, { scroll: false, open: true });
+});
+$("#feed").addEventListener("dblclick", e => { if (e.target.closest(".row")) openSelected(); });
+$("#feed").addEventListener("submit", e => {
+  if (e.target.id !== "watch-form") return;
+  e.preventDefault();
+  const input = $("#watch-input");
+  const v = input.value.trim();
+  if (v && !S.watch.some(w => norm(w) === norm(v))) { S.watch.push(v); saveWatch(); }
+  const again = $("#watch-input"); if (again) again.focus();
+});
+$("#feed").addEventListener("change", e => {
+  const box = e.target.closest("[data-mute]");
+  if (!box) return;
+  const code = box.dataset.mute;
+  if (box.checked) S.muted.delete(code); else S.muted.add(code);
+  store.set("muted", [...S.muted]);
+  renderAll();
+});
+
+function saveWatch() {
+  store.set("watch", S.watch);
+  WATCH_RES = watchRegexes();
+  S.items.forEach(applyWatch);
+  renderAll();
+}
+
+$("#story").addEventListener("click", async e => {
+  if (e.target.closest("[data-close]")) { $("#story").classList.remove("open"); return; }
+  const go = e.target.closest("[data-goto]");
+  if (go) {
+    const id = go.dataset.goto;
+    if (!S.view.some(it => it.id === id)) { S.query = ""; $("#cmd").value = ""; S.srcFilter = null; S.tab = "top"; renderAll(); }
+    return select(id, { open: true });
+  }
+  const src = e.target.closest("[data-src]");
+  if (src) return setSourceFilter(src.dataset.src);
+  const copy = e.target.closest("[data-copy]");
+  if (copy) {
+    try { await navigator.clipboard.writeText(copy.dataset.copy); toast("Lien copié"); }
+    catch (err) { toast("Copie impossible : sélectionne le lien à la main"); }
+  }
+});
+
+$("#refresh").addEventListener("click", refresh);
+
+document.addEventListener("keydown", e => {
+  const typing = e.target.matches("input, textarea");
+  if (e.key === "Escape") {
+    if ($("#story").classList.contains("open") && isPhone()) { $("#story").classList.remove("open"); return; }
+    if (typing) { if (e.target.id === "cmd" && !e.target.value) e.target.blur(); else if (e.target.id === "cmd") { e.target.value = ""; S.query = ""; renderAll(); } else e.target.blur(); return; }
+    return clearFilters();
+  }
+  if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "/") { e.preventDefault(); $("#cmd").focus(); $("#cmd").select(); return; }
+  if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); return move(1); }
+  if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); return move(-1); }
+  if (e.key === "PageDown") { e.preventDefault(); return move(15); }
+  if (e.key === "PageUp") { e.preventDefault(); return move(-15); }
+  if (e.key === "Enter" || e.key === "o") {
+    if (e.target.closest("button, a")) return;
+    e.preventDefault(); return openSelected();
+  }
+  if (e.key === "r" || e.key === "R") { e.preventDefault(); return refresh(); }
+  if (/^[1-8]$/.test(e.key)) { e.preventDefault(); return setTab(TABS[Number(e.key) - 1].id); }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) { S.unseen = 0; updateTitle(); load(); }
+});
+
+/* ===================================================== démarrage */
+if (isPhone()) $("#cmd").placeholder = "Chercher : OAT, spread…";
+tickClocks();
+setInterval(tickClocks, 1000);
+setInterval(() => { if (!S.refreshing) renderStatus(); }, 15e3);
+setInterval(() => { // retire le marqueur « nouveau » au bout de 10 minutes
+  const limit = Date.now() - 10 * 60e3;
+  let changed = false;
+  for (const [id, t] of S.fresh) if (t < limit) { S.fresh.delete(id); changed = true; }
+  if (changed && S.tab !== "sources") { renderFeed(); }
+}, 60e3);
+renderAll();
+load().then(schedulePoll);
+})();
+</script>
+</body>
+</html>
